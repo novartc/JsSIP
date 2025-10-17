@@ -2,7 +2,7 @@
   "name": "@novartc/jssip",
   "title": "JsSIP",
   "description": "the Javascript SIP library",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "types": "lib/JsSIP.d.ts",
   "main": "lib-es5/JsSIP.js",
   "keywords": [
