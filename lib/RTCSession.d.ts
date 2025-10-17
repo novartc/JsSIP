@@ -294,7 +294,7 @@ export class RTCSession extends EventEmitter {
 
   unhold(options?: HoldOptions, done?: VoidFunction): boolean;
 
-  renegotiate(options?: RenegotiateOptions, done?: VoidFunction): boolean;
+  renegotiate(options?: RenegotiateOptions, done?: VoidFunction, failed?: VoidFunction): boolean;
 
   isOnHold(): OnHoldResult;
 
