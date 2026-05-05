@@ -29,6 +29,8 @@ export interface CallOptions extends AnswerOptions {
 	anonymous?: boolean;
 	fromUserName?: string;
 	fromDisplayName?: string;
+	directionVideo?: RTCRtpTransceiverDirection;
+	directionAudio?: RTCRtpTransceiverDirection;
 }
 
 export interface UAConfiguration {

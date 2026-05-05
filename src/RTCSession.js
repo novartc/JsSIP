@@ -378,7 +378,11 @@ module.exports = class RTCSession extends EventEmitter {
 		this._sendInitialRequest(
 			mediaConstraints,
 			rtcOfferConstraints,
-			mediaStream
+			mediaStream,
+			{
+				directionAudio: options.directionAudio,
+				directionVideo: options.directionVideo,
+			}
 		);
 	}
 
@@ -2414,7 +2418,12 @@ module.exports = class RTCSession extends EventEmitter {
 	/**
 	 * Initial Request Sender
 	 */
-	_sendInitialRequest(mediaConstraints, rtcOfferConstraints, mediaStream) {
+	_sendInitialRequest(
+		mediaConstraints,
+		rtcOfferConstraints,
+		mediaStream,
+		{ directionAudio, directionVideo }
+	) {
 		const request_sender = new RequestSender(this._ua, this._request, {
 			onRequestTimeout: () => {
 				this.onRequestTimeout();
@@ -2473,9 +2482,30 @@ module.exports = class RTCSession extends EventEmitter {
 				this._localMediaStream = stream;
 
 				if (stream) {
+					let hasAudio = false;
+					let hasVideo = false;
+
 					stream.getTracks().forEach(track => {
+						if (track.kind === 'audio') {
+							hasAudio = true;
+						} else if (track.kind === 'video') {
+							hasVideo = true;
+						}
 						this._connection.addTrack(track, stream);
 					});
+
+					if (!hasAudio && directionAudio === 'recvonly') {
+						this._connection.addTransceiver('audio', {
+							direction: 'recvonly',
+							streams: [stream],
+						});
+					}
+					if (!hasVideo && directionVideo === 'recvonly') {
+						this._connection.addTransceiver('video', {
+							direction: 'recvonly',
+							streams: [stream],
+						});
+					}
 				}
 
 				// TODO: should this be triggered here?
