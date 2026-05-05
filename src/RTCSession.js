@@ -1223,7 +1223,7 @@ module.exports = class RTCSession extends EventEmitter {
 		return true;
 	}
 
-	renegotiate(options = {}, done) {
+	renegotiate(options = {}, done, failed) {
 		logger.debug('renegotiate()');
 
 		const rtcOfferConstraints = options.rtcOfferConstraints || null;
@@ -1246,11 +1246,15 @@ module.exports = class RTCSession extends EventEmitter {
 				}
 			},
 			failed: () => {
-				this.terminate({
-					cause: JsSIP_C.causes.WEBRTC_ERROR,
-					status_code: 500,
-					reason_phrase: 'Media Renegotiation Failed',
-				});
+				if (failed) {
+					failed();
+				} else {
+					this.terminate({
+						cause: JsSIP_C.causes.WEBRTC_ERROR,
+						status_code: 500,
+						reason_phrase: 'Media Renegotiation Failed',
+					});
+				}
 			},
 		};
 
