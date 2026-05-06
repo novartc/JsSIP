@@ -2488,15 +2488,23 @@ module.exports = class RTCSession extends EventEmitter {
 				if (stream) {
 					let hasAudio = false;
 					let hasVideo = false;
+					let hasEnabledAudio = false;
 
 					stream.getTracks().forEach(track => {
 						if (track.kind === 'audio') {
 							hasAudio = true;
+							if (track.enabled) {
+								hasEnabledAudio = true;
+							}
 						} else if (track.kind === 'video') {
 							hasVideo = true;
 						}
 						this._connection.addTrack(track, stream);
 					});
+
+					if (!hasAudio || !hasEnabledAudio) {
+						this._audioMuted = true;
+					}
 
 					if (!hasAudio && directionAudio === 'recvonly') {
 						this._connection.addTransceiver('audio', {
